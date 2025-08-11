@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的个人空间</title>
+    <title>个人记录 | 日记、计划与总结</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script>
-        // 配置Tailwind自定义颜色和字体
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         primary: '#3B82F6',
                         secondary: '#10B981',
-                        accent: '#8B5CF6',
+                        accent: '#F59E0B',
+                        neutral: '#64748B',
                         dark: '#1E293B',
-                        light: '#F8FAFC'
                     },
                     fontFamily: {
                         sans: ['Inter', 'system-ui', 'sans-serif'],
@@ -27,1169 +26,482 @@
     </script>
     <style type="text/tailwindcss">
         @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
             .text-shadow {
                 text-shadow: 0 2px 4px rgba(0,0,0,0.1);
             }
             .transition-custom {
                 transition: all 0.3s ease;
             }
-            .card-hover {
-                @apply hover:shadow-lg hover:-translate-y-1 transition-all duration-300;
-            }
         }
     </style>
 </head>
-<body class="bg-gray-50 font-sans text-gray-800">
-    <!-- 导航栏 -->
-    <header id="navbar" class="fixed w-full bg-white/90 backdrop-blur-sm shadow-sm z-50 transition-all duration-300">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold text-primary flex items-center">
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+    <!-- 顶部导航栏 -->
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-primary flex items-center">
                 <i class="fa fa-book mr-2"></i>
-                <span>我的空间</span>
-            </a>
-            
-            <!-- 桌面导航 -->
-            <nav class="hidden md:flex space-x-8">
-                <a href="#home" class="nav-link font-medium hover:text-primary transition-custom">首页</a>
-                <a href="#thoughts" class="nav-link font-medium hover:text-primary transition-custom">日常想法</a>
-                <a href="#reading" class="nav-link font-medium hover:text-primary transition-custom">读书笔记</a>
-                <a href="#plans" class="nav-link font-medium hover:text-primary transition-custom">工作计划</a>
-            </nav>
-            
-            <!-- 移动端菜单按钮 -->
-            <button id="menu-toggle" class="md:hidden text-gray-700 focus:outline-none">
-                <i class="fa fa-bars text-xl"></i>
-            </button>
-        </div>
-        
-        <!-- 移动端导航菜单 -->
-        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
-            <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
-                <a href="#home" class="py-2 hover:text-primary transition-custom">首页</a>
-                <a href="#thoughts" class="py-2 hover:text-primary transition-custom">日常想法</a>
-                <a href="#reading" class="py-2 hover:text-primary transition-custom">读书笔记</a>
-                <a href="#plans" class="py-2 hover:text-primary transition-custom">工作计划</a>
+                <span>个人记录</span>
+            </h1>
+            <div class="flex items-center space-x-2">
+                <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-100 transition-custom">
+                    <i class="fa fa-moon-o text-gray-600"></i>
+                </button>
+                <button id="exportData" class="p-2 rounded-full hover:bg-gray-100 transition-custom">
+                    <i class="fa fa-download text-gray-600"></i>
+                </button>
             </div>
         </div>
     </header>
 
-    <main>
-        <!-- 首页/个人简介 -->
-        <section id="home" class="pt-28 pb-20 bg-gradient-to-br from-blue-50 to-indigo-50">
-            <div class="container mx-auto px-4">
-                <div class="flex flex-col md:flex-row items-center">
-                    <div class="md:w-1/2 mb-10 md:mb-0">
-                        <img src="https://picsum.photos/seed/profile/400/400" alt="个人照片" class="w-64 h-64 rounded-full mx-auto md:mx-0 object-cover shadow-xl border-4 border-white">
-                    </div>
-                    <div class="md:w-1/2 md:pl-10">
-                        <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-dark mb-4 leading-tight">
-                            你好，我是<span class="text-primary">谷树</span>
-                        </h1>
-                        <p class="text-gray-600 text-lg mb-6">
-                            热爱生活的记录者，喜欢阅读、思考和整理思绪。这个空间用来分享我的日常想法、读书笔记和工作计划。
-                        </p>
-                        <div class="flex flex-wrap gap-4">
-                            <a href="#thoughts" class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-custom flex items-center">
-                                <i class="fa fa-lightbulb-o mr-2"></i> 查看我的想法
-                            </a>
-                            <a href="#plans" class="bg-white hover:bg-gray-100 text-primary border border-primary px-6 py-3 rounded-lg shadow-sm hover:shadow-md transition-custom flex items-center">
-                                <i class="fa fa-list mr-2"></i> 浏览工作计划
-                            </a>
-                        </div>
+    <!-- 主要内容区 -->
+    <main class="flex-grow container mx-auto px-4 py-6">
+        <!-- 控制区 -->
+        <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+            <div class="flex flex-wrap gap-4 items-center">
+                <button id="newEntryBtn" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg flex items-center transition-custom">
+                    <i class="fa fa-plus mr-2"></i> 新建记录
+                </button>
+                
+                <div class="ml-auto flex flex-wrap gap-2">
+                    <select id="categoryFilter" class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50">
+                        <option value="all">所有类别</option>
+                        <option value="study">学习</option>
+                        <option value="work">工作</option>
+                        <option value="life">生活</option>
+                    </select>
+                    
+                    <select id="typeFilter" class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50">
+                        <option value="all">所有类型</option>
+                        <option value="journal">日记</option>
+                        <option value="plan">计划</option>
+                        <option value="summary">总结</option>
+                    </select>
+                    
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="搜索内容..." class="border border-gray-300 rounded-lg px-3 py-2 pl-9 focus:outline-none focus:ring-2 focus:ring-primary/50">
+                        <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <!-- 日常想法 -->
-        <section id="thoughts" class="py-20 bg-white">
-            <div class="container mx-auto px-4">
-                <div class="text-center mb-16">
-                    <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-dark mb-4">日常想法</h2>
-                    <p class="text-gray-600 max-w-2xl mx-auto">记录生活中的点滴思考和灵感瞬间，这些碎片化的想法构成了我的思维世界。</p>
-                </div>
-                
-                <div id="thoughts-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- 想法卡片1 - 在这里添加或修改初始内容 -->
-                    <div class="bg-gray-50 rounded-xl shadow-sm p-6 card-hover">
-                        <div class="flex justify-between items-start mb-4">
-                            <span class="text-sm text-gray-500">2025年8月9日</span>
-                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">思考</span>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-3">关于日常新想法的思考</h3>
-                        <p class="text-gray-600 mb-4">每天保持有新想法的产生，记录并尝试实现，有新的想法不一定能立马实现，会遇到各种困难，所以要记录一点点实现。近期关于油猴脚本的学习使用。</p>
-                        <div class="flex justify-between items-center">
-                            <a href="#" class="text-primary hover:text-primary/80 font-medium flex items-center transition-custom view-content">
-                                阅读更多 <i class="fa fa-arrow-right ml-2"></i>
-                            </a>
-                            <button class="text-gray-500 hover:text-red-500 transition-custom delete-content" data-type="thought">
-                                <i class="fa fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- 想法卡片2 - 在这里添加或修改初始内容 -->
-                    <div class="bg-gray-50 rounded-xl shadow-sm p-6 card-hover">
-                        <div class="flex justify-between items-start mb-4">
-                            <span class="text-sm text-gray-500">2025年8月9日</span>
-                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">感悟</span>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-3">简单生活的艺术</h3>
-                        <p class="text-gray-600 mb-4">减少物质欲望后，反而获得了更多心灵的自由。保持简单基本的生活，尝试极简主义，只保留真正必要的物品，生活空间变得整洁，心情也更舒畅。</p>
-                        <div class="flex justify-between items-center">
-                            <a href="#" class="text-primary hover:text-primary/80 font-medium flex items-center transition-custom view-content">
-                                阅读更多 <i class="fa fa-arrow-right ml-2"></i>
-                            </a>
-                            <button class="text-gray-500 hover:text-red-500 transition-custom delete-content" data-type="thought">
-                                <i class="fa fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- 想法卡片3 - 在这里添加或修改初始内容 -->
-                    <div class="bg-gray-50 rounded-xl shadow-sm p-6 card-hover">
-                        <div class="flex justify-between items-start mb-4">
-                            <span class="text-sm text-gray-500">2023年10月5日</span>
-                            <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">灵感</span>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-3">晨间写作</h3>
-                        <p class="text-gray-600 mb-4">坚持每天早上起床后写15分钟，不考虑语法和结构，只是自由书写。</p>
-                        <div class="flex justify-between items-center">
-                            <a href="#" class="text-primary hover:text-primary/80 font-medium flex items-center transition-custom view-content">
-                                阅读更多 <i class="fa fa-arrow-right ml-2"></i>
-                            </a>
-                            <button class="text-gray-500 hover:text-red-500 transition-custom delete-content" data-type="thought">
-                                <i class="fa fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="text-center mt-12">
-                    <button id="add-thought" class="bg-white border border-primary text-primary hover:bg-primary hover:text-white px-6 py-3 rounded-lg shadow-sm hover:shadow-md transition-custom flex items-center mx-auto">
-                        <i class="fa fa-plus mr-2"></i> 添加新想法
-                    </button>
-                </div>
+        <!-- 记录列表 -->
+        <div id="entriesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- 记录条目将通过JavaScript动态生成 -->
+            <div class="col-span-full text-center py-12 text-gray-500">
+                <i class="fa fa-file-text-o text-5xl mb-4 opacity-30"></i>
+                <p>暂无记录，点击"新建记录"开始添加</p>
             </div>
-        </section>
-
-        <!-- 读书笔记 -->
-        <section id="reading" class="py-20 bg-gray-50">
-            <div class="container mx-auto px-4">
-                <div class="text-center mb-16">
-                    <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-dark mb-4">读书笔记</h2>
-                    <p class="text-gray-600 max-w-2xl mx-auto">每本书都是一扇窗，记录下阅读时的思考与感悟，让知识的积累看得见。</p>
-                </div>
-                
-                <div id="reading-container" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- 读书笔记1 - 在这里添加或修改初始内容 -->
-                    <div class="bg-white rounded-xl shadow-sm overflow-hidden card-hover">
-                        <div class="flex flex-col md:flex-row">
-                            <div class="md:w-1/3">
-                                <img src="https://picsum.photos/seed/book1/300/400" alt="《从0开始做内容：底层逻辑》书籍封面" class="h-full w-full object-cover">
-                            </div>
-                            <div class="md:w-2/3 p-6">
-                                <div class="flex items-center mb-3">
-                                    <span class="bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full mr-2">自我提升</span>
-                                    <span class="text-sm text-gray-500">阅读于 2025年8月</span>
-                                </div>
-                                <h3 class="text-xl font-semibold mb-3">《从0开始做内容：底层逻辑》读书笔记</h3>
-                                <p class="text-gray-600 mb-4 line-clamp-3">这本书最让我受益的是"一份努力，多份收获"的理念。复利效应，不断完善打磨自己整理的内容，一份事物出售多次。避免低效竞争。</p>
-                                <div class="flex justify-between items-center">
-                                    <a href="#" class="text-primary hover:text-primary/80 font-medium flex items-center transition-custom view-content">
-                                        查看全文 <i class="fa fa-arrow-right ml-2"></i>
-                                    </a>
-                                    <button class="text-gray-500 hover:text-red-500 transition-custom delete-content" data-type="reading">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 读书笔记2 - 在这里添加或修改初始内容 -->
-                    <div class="bg-white rounded-xl shadow-sm overflow-hidden card-hover">
-                        <div class="flex flex-col md:flex-row">
-                            <div class="md:w-1/3">
-                                <img src="https://picsum.photos/seed/book2/300/400" alt="《Python3爬虫》书籍封面" class="h-full w-full object-cover">
-                            </div>
-                            <div class="md:w-2/3 p-6">
-                                <div class="flex items-center mb-3">
-                                    <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mr-2">历史</span>
-                                    <span class="text-sm text-gray-500">阅读于 2025年8月</span>
-                                </div>
-                                <h3 class="text-xl font-semibold mb-3">《Python3爬虫》读书笔记</h3>
-                                <p class="text-gray-600 mb-4 line-clamp-3">读完了写这里</p>
-                                <div class="flex justify-between items-center">
-                                    <a href="#" class="text-primary hover:text-primary/80 font-medium flex items-center transition-custom view-content">
-                                        查看全文 <i class="fa fa-arrow-right ml-2"></i>
-                                    </a>
-                                    <button class="text-gray-500 hover:text-red-500 transition-custom delete-content" data-type="reading">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="text-center mt-12">
-                    <button id="add-reading" class="bg-white border border-primary text-primary hover:bg-primary hover:text-white px-6 py-3 rounded-lg shadow-sm hover:shadow-md transition-custom flex items-center mx-auto">
-                        <i class="fa fa-plus mr-2"></i> 添加读书笔记
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- 工作计划 -->
-        <section id="plans" class="py-20 bg-white">
-            <div class="container mx-auto px-4">
-                <div class="text-center mb-16">
-                    <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-dark mb-4">工作计划</h2>
-                    <p class="text-gray-600 max-w-2xl mx-auto">合理规划时间，让每一天都更有意义，记录下需要完成的任务和目标。</p>
-                </div>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <!-- 今日计划 -->
-                    <div class="bg-blue-50 rounded-xl shadow-sm p-6">
-                        <div class="flex items-center mb-6">
-                            <div class="bg-blue-100 p-3 rounded-full mr-4">
-                                <i class="fa fa-sun-o text-primary text-xl"></i>
-                            </div>
-                            <h3 class="text-xl font-semibold">今日计划</h3>
-                        </div>
-                        
-                        <div id="today-plans" class="space-y-4">
-                            <!-- 今日计划项 - 在这里添加或修改初始内容 -->
-                            <div class="flex items-start plan-item">
-                                <input type="checkbox" class="mt-1 mr-3 h-5 w-5 text-primary rounded">
-                                <label class="text-gray-700 flex-grow">完成项目报告初稿</label>
-                                <button class="text-gray-400 hover:text-red-500 transition-custom delete-plan ml-2">
-                                    <i class="fa fa-times"></i>
-                                </button>
-                            </div>
-                            <div class="flex items-start plan-item">
-                                <input type="checkbox" class="mt-1 mr-3 h-5 w-5 text-primary rounded">
-                                <label class="text-gray-700 flex-grow">阅读30分钟</label>
-                                <button class="text-gray-400 hover:text-red-500 transition-custom delete-plan ml-2">
-                                    <i class="fa fa-times"></i>
-                                </button>
-                            </div>
-                            <div class="flex items-start plan-item">
-                                <input type="checkbox" class="mt-1 mr-3 h-5 w-5 text-primary rounded">
-                                <label class="text-gray-700 flex-grow">去公园锻炼</label>
-                                <button class="text-gray-400 hover:text-red-500 transition-custom delete-plan ml-2">
-                                    <i class="fa fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-6">
-                            <button class="add-plan-btn w-full bg-primary/10 hover:bg-primary/20 text-primary px-4 py-2 rounded-lg transition-custom flex items-center justify-center" data-plan-type="today">
-                                <i class="fa fa-plus mr-2"></i> 添加今日计划
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- 本周计划 -->
-                    <div class="bg-green-50 rounded-xl shadow-sm p-6">
-                        <div class="flex items-center mb-6">
-                            <div class="bg-green-100 p-3 rounded-full mr-4">
-                                <i class="fa fa-calendar text-secondary text-xl"></i>
-                            </div>
-                            <h3 class="text-xl font-semibold">本周计划</h3>
-                        </div>
-                        
-                        <div id="week-plans" class="space-y-4">
-                            <!-- 本周计划项 - 在这里添加或修改初始内容 -->
-                            <div class="flex items-start plan-item">
-                                <input type="checkbox" class="mt-1 mr-3 h-5 w-5 text-secondary rounded">
-                                <label class="text-gray-700 flex-grow">完成季度目标评估</label>
-                                <button class="text-gray-400 hover:text-red-500 transition-custom delete-plan ml-2">
-                                    <i class="fa fa-times"></i>
-                                </button>
-                            </div>
-                            <div class="flex items-start plan-item">
-                                <input type="checkbox" class="mt-1 mr-3 h-5 w-5 text-secondary rounded">
-                                <label class="text-gray-700 flex-grow">学习Python语言，C语言</label>
-                                <button class="text-gray-400 hover:text-red-500 transition-custom delete-plan ml-2">
-                                    <i class="fa fa-times"></i>
-                                </button>
-                            </div>
-                            <div class="flex items-start plan-item">
-                                <input type="checkbox" class="mt-1 mr-3 h-5 w-5 text-secondary rounded">
-                                <label class="text-gray-700 flex-grow">整理读书笔记</label>
-                                <button class="text-gray-400 hover:text-red-500 transition-custom delete-plan ml-2">
-                                    <i class="fa fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-6">
-                            <button class="add-plan-btn w-full bg-secondary/10 hover:bg-secondary/20 text-secondary px-4 py-2 rounded-lg transition-custom flex items-center justify-center" data-plan-type="week">
-                                <i class="fa fa-plus mr-2"></i> 添加本周计划
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- 长期目标 -->
-                    <div class="bg-purple-50 rounded-xl shadow-sm p-6">
-                        <div class="flex items-center mb-6">
-                            <div class="bg-purple-100 p-3 rounded-full mr-4">
-                                <i class="fa fa-rocket text-accent text-xl"></i>
-                            </div>
-                            <h3 class="text-xl font-semibold">长期目标</h3>
-                        </div>
-                        
-                        <div id="longterm-plans" class="space-y-4">
-                            <!-- 长期计划项 - 在这里添加或修改初始内容 -->
-                            <div class="flex items-start plan-item">
-                                <input type="checkbox" class="mt-1 mr-3 h-5 w-5 text-accent rounded">
-                                <label class="text-gray-700 flex-grow">掌握一门新技能</label>
-                                <button class="text-gray-400 hover:text-red-500 transition-custom delete-plan ml-2">
-                                    <i class="fa fa-times"></i>
-                                </button>
-                            </div>
-                            <div class="flex items-start plan-item">
-                                <input type="checkbox" class="mt-1 mr-3 h-5 w-5 text-accent rounded">
-                                <label class="text-gray-700 flex-grow">去图书馆借阅50本书</label>
-                                <button class="text-gray-400 hover:text-red-500 transition-custom delete-plan ml-2">
-                                    <i class="fa fa-times"></i>
-                                </button>
-                            </div>
-                            <div class="flex items-start plan-item">
-                                <input type="checkbox" class="mt-1 mr-3 h-5 w-5 text-accent rounded">
-                                <label class="text-gray-700 flex-grow">完成个人项目</label>
-                                <button class="text-gray-400 hover:text-red-500 transition-custom delete-plan ml-2">
-                                    <i class="fa fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-6">
-                            <button class="add-plan-btn w-full bg-accent/10 hover:bg-accent/20 text-accent px-4 py-2 rounded-lg transition-custom flex items-center justify-center" data-plan-type="longterm">
-                                <i class="fa fa-plus mr-2"></i> 添加长期目标
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        </div>
     </main>
 
-    <!-- 模态框 - 添加内容 -->
-    <div id="modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-300">
-            <div class="p-6 border-b">
-                <div class="flex justify-between items-center">
-                    <h3 id="modal-title" class="text-xl font-semibold">添加新内容</h3>
-                    <button id="close-modal" class="text-gray-500 hover:text-gray-700">
-                        <i class="fa fa-times text-xl"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="p-6">
-                <form id="content-form">
-                    <input type="hidden" id="content-id"> <!-- 用于编辑已有内容 -->
-                    
-                    <div class="mb-4">
-                        <label for="content-title" class="block text-gray-700 font-medium mb-2">标题</label>
-                        <input type="text" id="content-title" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom" placeholder="输入标题">
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label for="content-category" class="block text-gray-700 font-medium mb-2">分类</label>
-                        <select id="content-category" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom">
-                            <option value="thought">日常想法</option>
-                            <option value="reading">读书笔记</option>
-                        </select>
-                    </div>
-                    
-                    <div class="mb-4" id="reading-meta-container" style="display: none;">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label for="book-category" class="block text-gray-700 font-medium mb-2">书籍类别</label>
-                                <input type="text" id="book-category" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom" placeholder="例如：小说、哲学">
-                            </div>
-                            <div>
-                                <label for="reading-date" class="block text-gray-700 font-medium mb-2">阅读日期</label>
-                                <input type="text" id="reading-date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom" placeholder="例如：2023年10月">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label for="content-text" class="block text-gray-700 font-medium mb-2">内容</label>
-                        <textarea id="content-text" rows="8" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom" placeholder="输入内容..."></textarea>
-                    </div>
-                    
-                    <div class="flex justify-end">
-                        <button type="button" id="cancel-btn" class="mr-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-custom">取消</button>
-                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom">保存</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- 模态框 - 查看内容详情 -->
-    <div id="detail-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-300">
-            <div class="p-6 border-b flex justify-between items-center">
-                <h3 id="detail-title" class="text-xl font-semibold"></h3>
-                <div>
-                    <button id="edit-content" class="text-primary hover:text-primary/80 mr-3">
-                        <i class="fa fa-edit"></i> 编辑
-                    </button>
-                    <button id="close-detail" class="text-gray-500 hover:text-gray-700">
-                        <i class="fa fa-times text-xl"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="p-6">
-                <div id="detail-meta" class="text-gray-500 mb-4 text-sm"></div>
-                <div id="detail-content" class="text-gray-700 leading-relaxed"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 添加计划的小模态框 -->
-    <div id="plan-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-md transform scale-95 transition-transform duration-300">
-            <div class="p-6 border-b">
-                <div class="flex justify-between items-center">
-                    <h3 id="plan-modal-title" class="text-xl font-semibold">添加计划</h3>
-                    <button id="close-plan-modal" class="text-gray-500 hover:text-gray-700">
-                        <i class="fa fa-times text-xl"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="p-6">
-                <form id="plan-form">
-                    <input type="hidden" id="plan-type">
-                    
-                    <div class="mb-4">
-                        <label for="plan-content" class="block text-gray-700 font-medium mb-2">计划内容</label>
-                        <input type="text" id="plan-content" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom" placeholder="输入计划内容">
-                    </div>
-                    
-                    <div class="flex justify-end">
-                        <button type="button" id="cancel-plan-btn" class="mr-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-custom">取消</button>
-                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom">添加</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- 页脚 -->
-    <footer class="bg-dark text-white py-12">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-6 md:mb-0">
-                    <h3 class="text-xl font-bold mb-2 flex items-center">
-                        <i class="fa fa-book mr-2"></i> 我的空间
-                    </h3>
-                    <p class="text-gray-400">记录生活，分享思考</p>
-                </div>
-                
-                <div class="flex space-x-6">
-                    <a href="#" class="text-gray-400 hover:text-white transition-custom">
-                        <i class="fa fa-github text-2xl"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white transition-custom">
-                        <i class="fa fa-twitter text-2xl"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white transition-custom">
-                        <i class="fa fa-instagram text-2xl"></i>
-                    </a>
-                </div>
-            </div>
-            
-            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-                <p>&copy; 2023 我的个人空间 | 用 GitHub Pages 搭建</p>
-            </div>
+    <!-- 底部信息 -->
+    <footer class="bg-white border-t border-gray-200 py-4">
+        <div class="container mx-auto px-4 text-center text-gray-500 text-sm">
+            <p>数据存储在本地，确保您的隐私安全</p>
         </div>
     </footer>
 
+    <!-- 新建/编辑记录模态框 -->
+    <div id="entryModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-auto">
+            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                <h2 id="modalTitle" class="text-xl font-bold">新建记录</h2>
+                <button id="closeModal" class="p-2 hover:bg-gray-100 rounded-full transition-custom">
+                    <i class="fa fa-times text-gray-500"></i>
+                </button>
+            </div>
+            
+            <form id="entryForm" class="p-4 space-y-4">
+                <input type="hidden" id="entryId">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="entryCategory" class="block text-sm font-medium text-gray-700 mb-1">类别</label>
+                        <select id="entryCategory" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50" required>
+                            <option value="study">学习</option>
+                            <option value="work">工作</option>
+                            <option value="life">生活</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="entryType" class="block text-sm font-medium text-gray-700 mb-1">类型</label>
+                        <select id="entryType" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50" required>
+                            <option value="journal">日记</option>
+                            <option value="plan">计划</option>
+                            <option value="summary">总结</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="entryTitle" class="block text-sm font-medium text-gray-700 mb-1">标题</label>
+                    <input type="text" id="entryTitle" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="输入标题..." required>
+                </div>
+                
+                <div>
+                    <label for="entryContent" class="block text-sm font-medium text-gray-700 mb-1">内容</label>
+                    <textarea id="entryContent" rows="8" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="输入内容..." required></textarea>
+                </div>
+                
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" id="cancelEntry" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-custom">取消</button>
+                    <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
-        // 数据存储和管理
+        // 数据管理
         const DataManager = {
-            // 初始化数据
+            entries: [],
+            
             init() {
-                // 检查本地存储中是否有数据，没有则初始化
-                if (!localStorage.getItem('personalSpaceData')) {
-                    const initialData = {
-                        thoughts: [],
-                        readings: [],
-                        plans: {
-                            today: [],
-                            week: [],
-                            longterm: []
+                this.loadEntries();
+                
+                // ==================================================
+                // 【在此处添加你的静态内容】
+                // 以下是示例内容，你可以根据需要修改或添加更多记录
+                // 注意：如果本地存储已有数据，这些预设内容不会显示
+                // 如需强制显示预设内容，可先清除浏览器本地存储
+                // ==================================================
+                if (this.entries.length === 0) {
+                    this.entries = [
+                        // 示例1：学习类日记
+                        {
+                            id: "1",
+                            createdAt: "2025-08-10T15:30:00",
+                            updatedAt: "2025-08-10T15:30:00",
+                            category: "study",  // 类别：学习
+                            type: "journal",    // 类型：日记
+                            title: "学习油猴脚本",
+                            content: "今天学习了油猴脚本的使用，很多网站VIP视频可以免费看了，又省下一笔钱；CSDN,知乎等网站也可以不登录无广告了，新技术get！"
+                        },
+                        // 示例2：工作类计划
+                        {
+                            id: "2",
+                            createdAt: "2025-08-10T09:15:00",
+                            updatedAt: "2025-08-10T09:15:00",
+                            category: "work",   // 类别：工作
+                            type: "plan",       // 类型：计划
+                            title: "今日工作安排",
+                            content: "把简历弄好，弄成pdf的，然后多多发等面试"
+                        },
+                        // 示例3：生活类总结
+                        {
+                            id: "3",
+                            createdAt: "2025-08-09T21:45:00",
+                            updatedAt: "2025-08-09T21:45:00",
+                            category: "life",   // 类别：生活
+                            type: "summary",    // 类型：总结
+                            title: "周末生活总结",
+                            content: "学做菜，把衣服洗好了"
                         }
-                    };
-                    localStorage.setItem('personalSpaceData', JSON.stringify(initialData));
+                        // 在这里继续添加更多记录...
+                        // ,{
+                        //     id: "4",
+                        //     createdAt: "2025-08-08T...",
+                        //     updatedAt: "2025-08-08T...",
+                        //     category: "...",
+                        //     type: "...",
+                        //     title: "...",
+                        //     content: "..."
+                        // }
+                    ];
+                    this.saveEntries(); // 保存到本地存储
                 }
-                
-                this.loadFromDOM();
-                this.loadFromStorage();
             },
             
-            // 从DOM加载初始数据到本地存储
-            loadFromDOM() {
-                const data = this.getData();
-                
-                // 如果已有数据，则不再从DOM加载
-                if (data.thoughts.length > 0 || data.readings.length > 0) {
-                    return;
-                }
-                
-                // 加载想法
-                document.querySelectorAll('#thoughts-container > div').forEach(card => {
-                    const dateEl = card.querySelector('.text-sm.text-gray-500');
-                    const categoryEl = card.querySelector('.rounded-full');
-                    const titleEl = card.querySelector('h3');
-                    const contentEl = card.querySelector('p');
-                    
-                    if (dateEl && categoryEl && titleEl && contentEl) {
-                        data.thoughts.push({
-                            id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
-                            date: dateEl.textContent,
-                            category: categoryEl.textContent,
-                            title: titleEl.textContent,
-                            content: contentEl.textContent
-                        });
-                    }
-                });
-                
-                // 加载读书笔记
-                document.querySelectorAll('#reading-container > div').forEach(card => {
-                    const categoryEl = card.querySelector('.rounded-full');
-                    const dateEl = card.querySelector('.text-sm.text-gray-500');
-                    const titleEl = card.querySelector('h3');
-                    const contentEl = card.querySelector('p');
-                    
-                    if (categoryEl && dateEl && titleEl && contentEl) {
-                        data.readings.push({
-                            id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
-                            bookCategory: categoryEl.textContent,
-                            readingDate: dateEl.textContent.replace('阅读于 ', ''),
-                            title: titleEl.textContent,
-                            content: contentEl.textContent
-                        });
-                    }
-                });
-                
-                // 加载计划
-                document.querySelectorAll('#today-plans .plan-item').forEach(item => {
-                    const label = item.querySelector('label');
-                    if (label) {
-                        data.plans.today.push({
-                            id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
-                            content: label.textContent,
-                            completed: item.querySelector('input').checked
-                        });
-                    }
-                });
-                
-                document.querySelectorAll('#week-plans .plan-item').forEach(item => {
-                    const label = item.querySelector('label');
-                    if (label) {
-                        data.plans.week.push({
-                            id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
-                            content: label.textContent,
-                            completed: item.querySelector('input').checked
-                        });
-                    }
-                });
-                
-                document.querySelectorAll('#longterm-plans .plan-item').forEach(item => {
-                    const label = item.querySelector('label');
-                    if (label) {
-                        data.plans.longterm.push({
-                            id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
-                            content: label.textContent,
-                            completed: item.querySelector('input').checked
-                        });
-                    }
-                });
-                
-                this.saveData(data);
+            loadEntries() {
+                const saved = localStorage.getItem('journalEntries');
+                this.entries = saved ? JSON.parse(saved) : [];
+                return this.entries;
             },
             
-            // 获取所有数据
-            getData() {
-                return JSON.parse(localStorage.getItem('personalSpaceData') || '{"thoughts":[],"readings":[],"plans":{"today":[],"week":[],"longterm":[]}}');
+            saveEntries() {
+                localStorage.setItem('journalEntries', JSON.stringify(this.entries));
             },
             
-            // 保存数据到本地存储
-            saveData(data) {
-                localStorage.setItem('personalSpaceData', JSON.stringify(data));
+            addEntry(entry) {
+                const newEntry = {
+                    id: Date.now().toString(),
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                    ...entry
+                };
+                this.entries.unshift(newEntry); // 添加到开头
+                this.saveEntries();
+                return newEntry;
             },
             
-            // 添加内容
-            addContent(type, content) {
-                const data = this.getData();
-                content.id = Date.now().toString() + Math.random().toString(36).substr(2, 5);
-                
-                if (type === 'thought' || type === 'reading') {
-                    data[type + 's'].push(content);
-                }
-                
-                this.saveData(data);
-                return content;
-            },
-            
-            // 添加计划
-            addPlan(planType, content) {
-                const data = this.getData();
-                data.plans[planType].push({
-                    id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
-                    content: content,
-                    completed: false
-                });
-                
-                this.saveData(data);
-                return data.plans[planType][data.plans[planType].length - 1];
-            },
-            
-            // 更新内容
-            updateContent(type, id, updatedContent) {
-                const data = this.getData();
-                const index = data[type + 's'].findIndex(item => item.id === id);
-                
+            updateEntry(id, updatedData) {
+                const index = this.entries.findIndex(entry => entry.id === id);
                 if (index !== -1) {
-                    data[type + 's'][index] = { ...data[type + 's'][index], ...updatedContent };
-                    this.saveData(data);
-                    return data[type + 's'][index];
+                    this.entries[index] = {
+                        ...this.entries[index],
+                        ...updatedData,
+                        updatedAt: new Date().toISOString()
+                    };
+                    this.saveEntries();
+                    return this.entries[index];
                 }
-                
                 return null;
             },
             
-            // 更新计划状态
-            updatePlanStatus(planType, id, completed) {
-                const data = this.getData();
-                const index = data.plans[planType].findIndex(item => item.id === id);
-                
-                if (index !== -1) {
-                    data.plans[planType][index].completed = completed;
-                    this.saveData(data);
+            deleteEntry(id) {
+                const initialLength = this.entries.length;
+                this.entries = this.entries.filter(entry => entry.id !== id);
+                if (this.entries.length !== initialLength) {
+                    this.saveEntries();
                     return true;
                 }
-                
                 return false;
             },
             
-            // 删除内容
-            deleteContent(type, id) {
-                const data = this.getData();
-                data[type + 's'] = data[type + 's'].filter(item => item.id !== id);
-                this.saveData(data);
-                return true;
+            exportEntries() {
+                const dataStr = JSON.stringify(this.entries, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `journal-export-${new Date().toISOString().slice(0,10)}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+            }
+        };
+
+        // UI 控制器
+        const UIController = {
+            entriesContainer: document.getElementById('entriesContainer'),
+            entryModal: document.getElementById('entryModal'),
+            entryForm: document.getElementById('entryForm'),
+            entryId: document.getElementById('entryId'),
+            entryTitle: document.getElementById('entryTitle'),
+            entryContent: document.getElementById('entryContent'),
+            entryCategory: document.getElementById('entryCategory'),
+            entryType: document.getElementById('entryType'),
+            modalTitle: document.getElementById('modalTitle'),
+            categoryFilter: document.getElementById('categoryFilter'),
+            typeFilter: document.getElementById('typeFilter'),
+            searchInput: document.getElementById('searchInput'),
+            
+            init() {
+                this.setupEventListeners();
+                this.renderEntries();
             },
             
-            // 删除计划
-            deletePlan(planType, id) {
-                const data = this.getData();
-                data.plans[planType] = data.plans[planType].filter(item => item.id !== id);
-                this.saveData(data);
-                return true;
+            setupEventListeners() {
+                // 新建记录按钮
+                document.getElementById('newEntryBtn').addEventListener('click', () => this.openModal());
+                
+                // 关闭模态框
+                document.getElementById('closeModal').addEventListener('click', () => this.closeModal());
+                document.getElementById('cancelEntry').addEventListener('click', () => this.closeModal());
+                
+                // 提交表单
+                this.entryForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveEntry();
+                });
+                
+                // 筛选器变化
+                this.categoryFilter.addEventListener('change', () => this.renderEntries());
+                this.typeFilter.addEventListener('change', () => this.renderEntries());
+                this.searchInput.addEventListener('input', () => this.renderEntries());
+                
+                // 导出数据
+                document.getElementById('exportData').addEventListener('click', () => DataManager.exportEntries());
+                
+                // 主题切换
+                document.getElementById('themeToggle').addEventListener('click', () => this.toggleTheme());
             },
             
-            // 从本地存储加载数据到页面
-            loadFromStorage() {
-                const data = this.getData();
-                const thoughtsContainer = document.getElementById('thoughts-container');
-                const readingContainer = document.getElementById('reading-container');
+            renderEntries() {
+                const entries = this.getFilteredEntries();
+                this.entriesContainer.innerHTML = '';
                 
-                // 清空容器
-                thoughtsContainer.innerHTML = '';
-                readingContainer.innerHTML = '';
+                if (entries.length === 0) {
+                    this.entriesContainer.innerHTML = `
+                        <div class="col-span-full text-center py-12 text-gray-500">
+                            <i class="fa fa-file-text-o text-5xl mb-4 opacity-30"></i>
+                            <p>没有找到匹配的记录</p>
+                        </div>
+                    `;
+                    return;
+                }
                 
-                // 加载想法
-                data.thoughts.forEach(thought => {
-                    thoughtsContainer.innerHTML += `
-                        <div class="bg-gray-50 rounded-xl shadow-sm p-6 card-hover" data-id="${thought.id}">
-                            <div class="flex justify-between items-start mb-4">
-                                <span class="text-sm text-gray-500">${thought.date}</span>
-                                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">${thought.category}</span>
-                            </div>
-                            <h3 class="text-xl font-semibold mb-3">${thought.title}</h3>
-                            <p class="text-gray-600 mb-4">${thought.content.length > 100 ? thought.content.substring(0, 100) + '...' : thought.content}</p>
-                            <div class="flex justify-between items-center">
-                                <a href="#" class="text-primary hover:text-primary/80 font-medium flex items-center transition-custom view-content">
-                                    阅读更多 <i class="fa fa-arrow-right ml-2"></i>
-                                </a>
-                                <button class="text-gray-500 hover:text-red-500 transition-custom delete-content" data-type="thought">
+                entries.forEach(entry => {
+                    const entryElement = this.createEntryElement(entry);
+                    this.entriesContainer.appendChild(entryElement);
+                });
+            },
+            
+            getFilteredEntries() {
+                const category = this.categoryFilter.value;
+                const type = this.typeFilter.value;
+                const search = this.searchInput.value.toLowerCase();
+                
+                return DataManager.entries.filter(entry => {
+                    const matchesCategory = category === 'all' || entry.category === category;
+                    const matchesType = type === 'all' || entry.type === type;
+                    const matchesSearch = search === '' || 
+                                         entry.title.toLowerCase().includes(search) || 
+                                         entry.content.toLowerCase().includes(search);
+                    
+                    return matchesCategory && matchesType && matchesSearch;
+                });
+            },
+            
+            createEntryElement(entry) {
+                const categoryClass = {
+                    study: 'bg-blue-50 border-blue-200',
+                    work: 'bg-green-50 border-green-200',
+                    life: 'bg-amber-50 border-amber-200'
+                }[entry.category];
+                
+                const typeIcon = {
+                    journal: '<i class="fa fa-book text-blue-500"></i> 日记',
+                    plan: '<i class="fa fa-list-alt text-green-500"></i> 计划',
+                    summary: '<i class="fa fa-bar-chart text-amber-500"></i> 总结'
+                }[entry.type];
+                
+                const categoryText = {
+                    study: '学习',
+                    work: '工作',
+                    life: '生活'
+                }[entry.category];
+                
+                const formattedDate = new Date(entry.createdAt).toLocaleString();
+                
+                const div = document.createElement('div');
+                div.className = `bg-white rounded-lg shadow-sm border ${categoryClass} overflow-hidden transition-custom hover:shadow-md`;
+                div.innerHTML = `
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-xs font-medium px-2 py-1 rounded-full ${
+                                entry.category === 'study' ? 'bg-blue-100 text-blue-800' :
+                                entry.category === 'work' ? 'bg-green-100 text-green-800' :
+                                'bg-amber-100 text-amber-800'
+                            }">${categoryText}</span>
+                            <span class="text-xs text-gray-500">${formattedDate}</span>
+                        </div>
+                        
+                        <h3 class="text-lg font-semibold mb-2 line-clamp-1">${entry.title}</h3>
+                        
+                        <div class="text-sm text-gray-600 mb-3 line-clamp-3">${this.formatContentPreview(entry.content)}</div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs flex items-center text-gray-500">${typeIcon}</span>
+                            <div class="flex space-x-1">
+                                <button class="edit-btn p-1.5 rounded hover:bg-gray-100 text-gray-600" data-id="${entry.id}">
+                                    <i class="fa fa-pencil"></i>
+                                </button>
+                                <button class="delete-btn p-1.5 rounded hover:bg-gray-100 text-gray-600" data-id="${entry.id}">
                                     <i class="fa fa-trash"></i>
                                 </button>
                             </div>
                         </div>
-                    `;
-                });
+                    </div>
+                `;
                 
-                // 加载读书笔记
-                data.readings.forEach(reading => {
-                    readingContainer.innerHTML += `
-                        <div class="bg-white rounded-xl shadow-sm overflow-hidden card-hover" data-id="${reading.id}">
-                            <div class="flex flex-col md:flex-row">
-                                <div class="md:w-1/3">
-                                    <img src="https://picsum.photos/seed/${reading.id}/300/400" alt="${reading.title}书籍封面" class="h-full w-full object-cover">
-                                </div>
-                                <div class="md:w-2/3 p-6">
-                                    <div class="flex items-center mb-3">
-                                        <span class="bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full mr-2">${reading.bookCategory}</span>
-                                        <span class="text-sm text-gray-500">阅读于 ${reading.readingDate}</span>
-                                    </div>
-                                    <h3 class="text-xl font-semibold mb-3">${reading.title}</h3>
-                                    <p class="text-gray-600 mb-4 line-clamp-3">${reading.content}</p>
-                                    <div class="flex justify-between items-center">
-                                        <a href="#" class="text-primary hover:text-primary/80 font-medium flex items-center transition-custom view-content">
-                                            查看全文 <i class="fa fa-arrow-right ml-2"></i>
-                                        </a>
-                                        <button class="text-gray-500 hover:text-red-500 transition-custom delete-content" data-type="reading">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
+                // 添加编辑和删除事件
+                div.querySelector('.edit-btn').addEventListener('click', () => this.editEntry(entry.id));
+                div.querySelector('.delete-btn').addEventListener('click', () => this.deleteEntry(entry.id));
                 
-                // 加载计划
-                const planContainers = {
-                    today: document.getElementById('today-plans'),
-                    week: document.getElementById('week-plans'),
-                    longterm: document.getElementById('longterm-plans')
+                return div;
+            },
+            
+            formatContentPreview(content) {
+                // 简单格式化内容预览，移除换行并限制长度
+                return content.replace(/\n/g, ' ').substring(0, 100) + (content.length > 100 ? '...' : '');
+            },
+            
+            openModal(isEdit = false, entry = null) {
+                this.entryForm.reset();
+                this.entryId.value = '';
+                this.modalTitle.textContent = isEdit ? '编辑记录' : '新建记录';
+                this.entryModal.classList.remove('hidden');
+                this.entryModal.classList.add('flex');
+                
+                if (isEdit && entry) {
+                    this.entryId.value = entry.id;
+                    this.entryTitle.value = entry.title;
+                    this.entryContent.value = entry.content;
+                    this.entryCategory.value = entry.category;
+                    this.entryType.value = entry.type;
+                }
+                
+                // 聚焦到标题输入框
+                setTimeout(() => this.entryTitle.focus(), 300);
+            },
+            
+            closeModal() {
+                this.entryModal.classList.remove('flex');
+                this.entryModal.classList.add('hidden');
+            },
+            
+            saveEntry() {
+                const id = this.entryId.value;
+                const entryData = {
+                    title: this.entryTitle.value,
+                    content: this.entryContent.value,
+                    category: this.entryCategory.value,
+                    type: this.entryType.value
                 };
                 
-                Object.keys(planContainers).forEach(planType => {
-                    planContainers[planType].innerHTML = '';
-                    data.plans[planType].forEach(plan => {
-                        const colorClass = planType === 'today' ? 'text-primary' : 
-                                         planType === 'week' ? 'text-secondary' : 'text-accent';
-                        
-                        planContainers[planType].innerHTML += `
-                            <div class="flex items-start plan-item" data-id="${plan.id}">
-                                <input type="checkbox" class="mt-1 mr-3 h-5 w-5 ${colorClass} rounded" ${plan.completed ? 'checked' : ''}>
-                                <label class="text-gray-700 flex-grow ${plan.completed ? 'line-through text-gray-400' : ''}">${plan.content}</label>
-                                <button class="text-gray-400 hover:text-red-500 transition-custom delete-plan ml-2">
-                                    <i class="fa fa-times"></i>
-                                </button>
-                            </div>
-                        `;
-                    });
-                });
+                if (id) {
+                    DataManager.updateEntry(id, entryData);
+                } else {
+                    DataManager.addEntry(entryData);
+                }
+                
+                this.closeModal();
+                this.renderEntries();
+            },
+            
+            editEntry(id) {
+                const entry = DataManager.entries.find(e => e.id === id);
+                if (entry) {
+                    this.openModal(true, entry);
+                }
+            },
+            
+            deleteEntry(id) {
+                if (confirm('确定要删除这条记录吗？')) {
+                    if (DataManager.deleteEntry(id)) {
+                        this.renderEntries();
+                    }
+                }
+            },
+            
+            toggleTheme() {
+                document.body.classList.toggle('dark-mode');
+                const icon = document.querySelector('#themeToggle i');
+                if (document.body.classList.contains('dark-mode')) {
+                    icon.classList.remove('fa-moon-o');
+                    icon.classList.add('fa-sun-o');
+                    document.body.classList.add('bg-gray-900', 'text-gray-100');
+                    document.body.classList.remove('bg-gray-50', 'text-gray-800');
+                } else {
+                    icon.classList.remove('fa-sun-o');
+                    icon.classList.add('fa-moon-o');
+                    document.body.classList.remove('bg-gray-900', 'text-gray-100');
+                    document.body.classList.add('bg-gray-50', 'text-gray-800');
+                }
             }
         };
 
-        // 导航菜单切换
-        const menuToggle = document.getElementById('menu-toggle');
-        const mobileMenu = document.getElementById('mobile-menu');
-        
-        menuToggle.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-        
-        // 导航栏滚动效果
-        const navbar = document.getElementById('navbar');
-        
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                navbar.classList.add('py-2', 'shadow');
-                navbar.classList.remove('py-3');
-            } else {
-                navbar.classList.add('py-3');
-                navbar.classList.remove('py-2', 'shadow');
-            }
-        });
-        
-        // 平滑滚动
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                
-                // 关闭移动菜单（如果打开）
-                mobileMenu.classList.add('hidden');
-                
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-                
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-        
-        // 模态框功能
-        const modal = document.getElementById('modal');
-        const modalTitle = document.getElementById('modal-title');
-        const contentForm = document.getElementById('content-form');
-        const closeModal = document.getElementById('close-modal');
-        const cancelBtn = document.getElementById('cancel-btn');
-        const addThoughtBtn = document.getElementById('add-thought');
-        const addReadingBtn = document.getElementById('add-reading');
-        const contentCategory = document.getElementById('content-category');
-        const readingMetaContainer = document.getElementById('reading-meta-container');
-        
-        // 详情模态框
-        const detailModal = document.getElementById('detail-modal');
-        const detailTitle = document.getElementById('detail-title');
-        const detailMeta = document.getElementById('detail-meta');
-        const detailContent = document.getElementById('detail-content');
-        const closeDetail = document.getElementById('close-detail');
-        const editContentBtn = document.getElementById('edit-content');
-        
-        // 计划模态框
-        const planModal = document.getElementById('plan-modal');
-        const planModalTitle = document.getElementById('plan-modal-title');
-        const planForm = document.getElementById('plan-form');
-        const closePlanModal = document.getElementById('close-plan-modal');
-        const cancelPlanBtn = document.getElementById('cancel-plan-btn');
-        const planTypeInput = document.getElementById('plan-type');
-        const planContentInput = document.getElementById('plan-content');
-        
-        // 当前编辑的内容ID和类型
-        let currentEditId = null;
-        let currentEditType = null;
-        let currentDetailItem = null;
-        
-        // 打开内容模态框
-        function openModal(title, category = 'thought') {
-            modalTitle.textContent = title;
-            contentCategory.value = category;
-            document.getElementById('content-id').value = '';
-            document.getElementById('content-title').value = '';
-            document.getElementById('content-text').value = '';
-            document.getElementById('book-category').value = '';
-            document.getElementById('reading-date').value = '';
-            
-            // 显示或隐藏读书笔记元数据
-            readingMetaContainer.style.display = category === 'reading' ? 'block' : 'none';
-            
-            modal.classList.remove('hidden');
-            // 触发动画
-            setTimeout(() => {
-                modal.classList.add('opacity-100');
-                modal.querySelector('div').classList.remove('scale-95');
-                modal.querySelector('div').classList.add('scale-100');
-            }, 10);
-            
-            // 阻止页面滚动
-            document.body.style.overflow = 'hidden';
-        }
-        
-        // 打开编辑模态框
-        function openEditModal(item, type) {
-            currentEditId = item.id;
-            currentEditType = type;
-            
-            if (type === 'thought') {
-                openModal('编辑日常想法', 'thought');
-                document.getElementById('content-title').value = item.title;
-                document.getElementById('content-text').value = item.content;
-                document.getElementById('content-id').value = item.id;
-            } else if (type === 'reading') {
-                openModal('编辑读书笔记', 'reading');
-                document.getElementById('content-title').value = item.title;
-                document.getElementById('content-text').value = item.content;
-                document.getElementById('book-category').value = item.bookCategory;
-                document.getElementById('reading-date').value = item.readingDate;
-                document.getElementById('content-id').value = item.id;
-            }
-        }
-        
-        // 打开详情模态框
-        function openDetailModal(item, type) {
-            currentDetailItem = { ...item, type };
-            detailTitle.textContent = item.title;
-            detailContent.textContent = item.content;
-            
-            if (type === 'thought') {
-                detailMeta.innerHTML = `
-                    <span class="mr-4">${item.date}</span>
-                    <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">${item.category}</span>
-                `;
-            } else if (type === 'reading') {
-                detailMeta.innerHTML = `
-                    <span class="bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full mr-2">${item.bookCategory}</span>
-                    <span>阅读于 ${item.readingDate}</span>
-                `;
-            }
-            
-            detailModal.classList.remove('hidden');
-            // 触发动画
-            setTimeout(() => {
-                detailModal.classList.add('opacity-100');
-                detailModal.querySelector('div').classList.remove('scale-95');
-                detailModal.querySelector('div').classList.add('scale-100');
-            }, 10);
-            
-            // 阻止页面滚动
-            document.body.style.overflow = 'hidden';
-        }
-        
-        // 打开计划模态框
-        function openPlanModal(title, planType) {
-            planModalTitle.textContent = title;
-            planTypeInput.value = planType;
-            planContentInput.value = '';
-            
-            planModal.classList.remove('hidden');
-            // 触发动画
-            setTimeout(() => {
-                planModal.classList.add('opacity-100');
-                planModal.querySelector('div').classList.remove('scale-95');
-                planModal.querySelector('div').classList.add('scale-100');
-            }, 10);
-            
-            // 阻止页面滚动
-            document.body.style.overflow = 'hidden';
-        }
-        
-        // 关闭模态框通用函数
-        function closeModalFunc(modalElement) {
-            modalElement.classList.remove('opacity-100');
-            modalElement.querySelector('div').classList.remove('scale-100');
-            modalElement.querySelector('div').classList.add('scale-95');
-            
-            setTimeout(() => {
-                modalElement.classList.add('hidden');
-                // 允许页面滚动
-                document.body.style.overflow = '';
-            }, 300);
-            
-            // 重置编辑状态
-            currentEditId = null;
-            currentEditType = null;
-        }
-        
-        // 按钮事件 - 添加内容
-        addThoughtBtn.addEventListener('click', () => openModal('添加日常想法', 'thought'));
-        addReadingBtn.addEventListener('click', () => openModal('添加读书笔记', 'reading'));
-        
-        // 按钮事件 - 关闭模态框
-        closeModal.addEventListener('click', () => closeModalFunc(modal));
-        cancelBtn.addEventListener('click', () => closeModalFunc(modal));
-        closeDetail.addEventListener('click', () => closeModalFunc(detailModal));
-        closePlanModal.addEventListener('click', () => closeModalFunc(planModal));
-        cancelPlanBtn.addEventListener('click', () => closeModalFunc(planModal));
-        
-        // 编辑内容按钮
-        editContentBtn.addEventListener('click', () => {
-            closeModalFunc(detailModal);
-            if (currentDetailItem) {
-                openEditModal(currentDetailItem, currentDetailItem.type);
-            }
-        });
-        
-        // 点击模态框外部关闭
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeModalFunc(modal);
-        });
-        
-        detailModal.addEventListener('click', (e) => {
-            if (e.target === detailModal) closeModalFunc(detailModal);
-        });
-        
-        planModal.addEventListener('click', (e) => {
-            if (e.target === planModal) closeModalFunc(planModal);
-        });
-        
-        // 内容分类切换事件
-        contentCategory.addEventListener('change', () => {
-            readingMetaContainer.style.display = contentCategory.value === 'reading' ? 'block' : 'none';
-        });
-        
-        // 内容表单提交
-        contentForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const contentId = document.getElementById('content-id').value;
-            const title = document.getElementById('content-title').value;
-            const category = contentCategory.value;
-            const content = document.getElementById('content-text').value;
-            
-            if (!title || !content) {
-                alert('请填写标题和内容');
-                return;
-            }
-            
-            const data = DataManager.getData();
-            
-            if (contentId) {
-                // 更新现有内容
-                if (category === 'thought') {
-                    DataManager.updateContent('thought', contentId, {
-                        title,
-                        content,
-                        date: new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })
-                    });
-                } else if (category === 'reading') {
-                    const bookCategory = document.getElementById('book-category').value;
-                    const readingDate = document.getElementById('reading-date').value;
-                    
-                    DataManager.updateContent('reading', contentId, {
-                        title,
-                        content,
-                        bookCategory,
-                        readingDate
-                    });
-                }
-            } else {
-                // 添加新内容
-                if (category === 'thought') {
-                    DataManager.addContent('thought', {
-                        title,
-                        content,
-                        date: new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' }),
-                        category: '思考'
-                    });
-                } else if (category === 'reading') {
-                    const bookCategory = document.getElementById('book-category').value || '未分类';
-                    const readingDate = document.getElementById('reading-date').value || new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' });
-                    
-                    DataManager.addContent('reading', {
-                        title,
-                        content,
-                        bookCategory,
-                        readingDate
-                    });
-                }
-            }
-            
-            // 重新加载数据并关闭模态框
-            DataManager.loadFromStorage();
-            closeModalFunc(modal);
-        });
-        
-        // 计划表单提交
-        planForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const planType = planTypeInput.value;
-            const content = planContentInput.value;
-            
-            if (!content) {
-                alert('请填写计划内容');
-                return;
-            }
-            
-            // 添加新计划
-            DataManager.addPlan(planType, content);
-            
-            // 重新加载数据并关闭模态框
-            DataManager.loadFromStorage();
-            closeModalFunc(planModal);
-        });
-        
-        // 查看内容事件委托
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('.view-content')) {
-                e.preventDefault();
-                const card = e.target.closest('[data-id]');
-                const id = card.getAttribute('data-id');
-                const type = card.closest('#thoughts-container') ? 'thought' : 'reading';
-                
-                const data = DataManager.getData();
-                const item = type === 'thought' 
-                    ? data.thoughts.find(t => t.id === id)
-                    : data.readings.find(r => r.id === id);
-                
-                if (item) {
-                    openDetailModal(item, type);
-                }
-            }
-        });
-        
-        // 删除内容事件委托
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('.delete-content')) {
-                e.preventDefault();
-                const btn = e.target.closest('.delete-content');
-                const card = btn.closest('[data-id]');
-                const id = card.getAttribute('data-id');
-                const type = btn.getAttribute('data-type');
-                
-                if (confirm('确定要删除这条内容吗？')) {
-                    DataManager.deleteContent(type, id);
-                    DataManager.loadFromStorage();
-                }
-            }
-        });
-        
-        // 添加计划按钮事件委托
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('.add-plan-btn')) {
-                const btn = e.target.closest('.add-plan-btn');
-                const planType = btn.getAttribute('data-plan-type');
-                const titles = {
-                    today: '添加今日计划',
-                    week: '添加本周计划',
-                    longterm: '添加长期目标'
-                };
-                
-                openPlanModal(titles[planType], planType);
-            }
-        });
-        
-        // 删除计划事件委托
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('.delete-plan')) {
-                e.preventDefault();
-                const btn = e.target.closest('.delete-plan');
-                const item = btn.closest('.plan-item');
-                const id = item.getAttribute('data-id');
-                let planType = 'today';
-                
-                if (item.closest('#week-plans')) {
-                    planType = 'week';
-                } else if (item.closest('#longterm-plans')) {
-                    planType = 'longterm';
-                }
-                
-                if (confirm('确定要删除这条计划吗？')) {
-                    DataManager.deletePlan(planType, id);
-                    DataManager.loadFromStorage();
-                }
-            }
-        });
-        
-        // 计划复选框事件委托
-        document.addEventListener('change', (e) => {
-            if (e.target.type === 'checkbox' && e.target.closest('.plan-item')) {
-                const item = e.target.closest('.plan-item');
-                const id = item.getAttribute('data-id');
-                const checked = e.target.checked;
-                let planType = 'today';
-                
-                if (item.closest('#week-plans')) {
-                    planType = 'week';
-                } else if (item.closest('#longterm-plans')) {
-                    planType = 'longterm';
-                }
-                
-                // 更新计划状态
-                DataManager.updatePlanStatus(planType, id, checked);
-                
-                // 更新UI
-                const label = item.querySelector('label');
-                if (checked) {
-                    label.classList.add('line-through', 'text-gray-400');
-                } else {
-                    label.classList.remove('line-through', 'text-gray-400');
-                }
-            }
-        });
-        
-        // 初始化
+        // 初始化应用
         document.addEventListener('DOMContentLoaded', () => {
             DataManager.init();
+            UIController.init();
         });
     </script>
 </body>
