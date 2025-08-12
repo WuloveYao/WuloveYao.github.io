@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>个人记录 | 日记、计划与总结</title>
+    <title>我的学习工作生活记录</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色和字体 -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#3B82F6',
-                        secondary: '#10B981',
-                        accent: '#F59E0B',
-                        neutral: '#64748B',
-                        dark: '#1E293B',
+                        study: '#3b82f6',      // 学习区域 - 蓝色
+                        work: '#10b981',       // 工作区域 - 绿色
+                        life: '#a855f7',       // 生活区域 - 紫色
+                        background: '#f3f4f6', // 背景色
                     },
                     fontFamily: {
                         sans: ['Inter', 'system-ui', 'sans-serif'],
@@ -24,484 +25,158 @@
             }
         }
     </script>
+    
     <style type="text/tailwindcss">
         @layer utilities {
+            .section-shadow {
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
             .content-auto {
                 content-visibility: auto;
-            }
-            .text-shadow {
-                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
-            .transition-custom {
-                transition: all 0.3s ease;
             }
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
-    <!-- 顶部导航栏 -->
-    <header class="bg-white shadow-sm sticky top-0 z-10">
-        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-primary flex items-center">
-                <i class="fa fa-book mr-2"></i>
-                <span>个人记录</span>
+<body class="bg-background min-h-screen bg-cover bg-center" style="background-image: url('https://cn.bing.com/images/search?view=detailV2&ccid=u35RA%2f%2f4&id=5065BBF930C4BFFB97A35C1B20F3E3195FF94847&thid=OIP.u35RA__4KGQbFgAs29SvUQHaEK&mediaurl=https%3a%2f%2fts1.tc.mm.bing.net%2fth%2fid%2fR-C.bb7e5103fff828641b16002cdbd4af51%3frik%3dR0j5Xxnj8yAbXA%26riu%3dhttp%253a%252f%252fimg.netbian.com%252ffile%252f2024%252f0709%252f1921550UIjR.jpg%26ehk%3ddSnDtIvApbLUlEeSdTh6eM5pvcFD8S5yotPXE9CpOe8%253d%26risl%3d%26pid%3dImgRaw%26r%3d0&exph=1080&expw=1920&q=%e9%bb%91%e7%a5%9e%e8%af%9d%e6%82%9f%e7%a9%ba%e5%a3%81%e7%ba%b8&mode=overlay&FORM=IQFRBA&ck=5D997ED8A2A89686BE50DC3D9D89F279&selectedIndex=0&idpp=serp&ajaxhist=0&ajaxserp=0');">
+    <!-- 页面标题 -->
+    <header class="py-8 bg-white shadow-md">
+        <div class="container mx-auto px-4">
+            <h1 class="text-[clamp(1.8rem,5vw,3rem)] font-bold text-center text-gray-800">
+                谷树的自留地
             </h1>
-            <div class="flex items-center space-x-2">
-                <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-100 transition-custom">
-                    <i class="fa fa-moon-o text-gray-600"></i>
-                </button>
-                <button id="exportData" class="p-2 rounded-full hover:bg-gray-100 transition-custom">
-                    <i class="fa fa-download text-gray-600"></i>
-                </button>
-            </div>
+            <p class="text-center text-gray-600 mt-2">学习 · 工作 · 生活</p>
         </div>
     </header>
 
     <!-- 主要内容区 -->
-    <main class="flex-grow container mx-auto px-4 py-6">
-        <!-- 控制区 -->
-        <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
-            <div class="flex flex-wrap gap-4 items-center">
-                <button id="newEntryBtn" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg flex items-center transition-custom">
-                    <i class="fa fa-plus mr-2"></i> 新建记录
-                </button>
-                
-                <div class="ml-auto flex flex-wrap gap-2">
-                    <select id="categoryFilter" class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50">
-                        <option value="all">所有类别</option>
-                        <option value="study">学习</option>
-                        <option value="work">工作</option>
-                        <option value="life">生活</option>
-                    </select>
-                    
-                    <select id="typeFilter" class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50">
-                        <option value="all">所有类型</option>
-                        <option value="journal">日记</option>
-                        <option value="plan">计划</option>
-                        <option value="summary">总结</option>
-                    </select>
-                    
-                    <div class="relative">
-                        <input type="text" id="searchInput" placeholder="搜索内容..." class="border border-gray-300 rounded-lg px-3 py-2 pl-9 focus:outline-none focus:ring-2 focus:ring-primary/50">
-                        <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    </div>
+    <main class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <!-- 学习记录区域 -->
+            <section class="bg-white rounded-lg section-shadow overflow-hidden transform transition hover:scale-[1.01]">
+                <div class="bg-study text-white p-4">
+                    <h2 class="text-xl font-bold flex items-center">
+                        <i class="fa fa-book mr-2"></i>学习记录
+                    </h2>
                 </div>
-            </div>
-        </div>
-
-        <!-- 记录列表 -->
-        <div id="entriesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- 记录条目将通过JavaScript动态生成 -->
-            <div class="col-span-full text-center py-12 text-gray-500">
-                <i class="fa fa-file-text-o text-5xl mb-4 opacity-30"></i>
-                <p>暂无记录，点击"新建记录"开始添加</p>
-            </div>
+                <div class="p-5 space-y-4">
+                    <!-- 学习内容条目 -->
+                    <div class="border-l-4 border-study pl-3 py-1">
+                        <h3 class="font-semibold text-gray-800">2025年8月12日</h3>
+                        <p class="text-gray-600 mt-1">学习了HTML和CSS的基础知识，了解了Tailwind CSS的使用方法。</p>
+                    </div>
+                    
+                    <div class="border-l-4 border-study pl-3 py-1">
+                        <h3 class="font-semibold text-gray-800">2025年8月10日</h3>
+                        <p class="text-gray-600 mt-1">学习了JavaScript的变量和数据类型，练习了几个简单的小程序。</p>
+                    </div>
+                    
+                    <div class="border-l-4 border-study pl-3 py-1">
+                        <h3 class="font-semibold text-gray-800">2025年8月8日</h3>
+                        <p class="text-gray-600 mt-1">开始学习前端开发，了解了网页的基本构成和开发流程。</p>
+                    </div>
+                    <div class="border-l-4 border-study pl-3 py-1">
+                        <h3 class="font-semibold text-gray-800">2025年8月12日</h3>
+                        <p class="text-gray-600 mt-1">学习python爬虫，手机app学习</p>
+                    </div>
+                    
+                    <!-- 在这里添加新的学习记录 -->
+                    <!-- 
+                    <div class="border-l-4 border-study pl-3 py-1">
+                        <h3 class="font-semibold text-gray-800">日期</h3>
+                        <p class="text-gray-600 mt-1">学习内容...</p>
+                    </div>
+                    -->
+                </div>
+            </section>
+            
+            <!-- 工作记录区域 -->
+            <section class="bg-white rounded-lg section-shadow overflow-hidden transform transition hover:scale-[1.01]">
+                <div class="bg-work text-white p-4">
+                    <h2 class="text-xl font-bold flex items-center">
+                        <i class="fa fa-briefcase mr-2"></i>工作记录
+                    </h2>
+                </div>
+                <div class="p-5 space-y-4">
+                    <!-- 工作内容条目 -->
+                    <div class="border-l-4 border-work pl-3 py-1">
+                        <h3 class="font-semibold text-gray-800">2025年8月12日</h3>
+                        <p class="text-gray-600 mt-1">完成了项目的首页设计，与团队讨论了下一步的开发计划。</p>
+                    </div>
+                    
+                    <div class="border-l-4 border-work pl-3 py-1">
+                        <h3 class="font-semibold text-gray-800">2025年8月11日</h3>
+                        <p class="text-gray-600 mt-1">修复了上周发现的几个bug，优化了页面加载速度。</p>
+                    </div>
+                    
+                    <div class="border-l-4 border-work pl-3 py-1">
+                        <h3 class="font-semibold text-gray-800">2025年8月8日</h3>
+                        <p class="text-gray-600 mt-1">参加了项目启动会议，明确了自己的职责和任务时间线。</p>
+                    </div>
+                    
+                    <!-- 在这里添加新的工作记录 -->
+                    <!-- 
+                    <div class="border-l-4 border-work pl-3 py-1">
+                        <h3 class="font-semibold text-gray-800">日期</h3>
+                        <p class="text-gray-600 mt-1">工作内容...</p>
+                    </div>
+                    -->
+                </div>
+            </section>
+            
+            <!-- 生活记录区域 -->
+            <section class="bg-white rounded-lg section-shadow overflow-hidden transform transition hover:scale-[1.01]">
+                <div class="bg-life text-white p-4">
+                    <h2 class="text-xl font-bold flex items-center">
+                        <i class="fa fa-home mr-2"></i>生活记录
+                    </h2>
+                </div>
+                <div class="p-5 space-y-4">
+                    <!-- 生活内容条目 -->
+                    <div class="border-l-4 border-life pl-3 py-1">
+                        <h3 class="font-semibold text-gray-800">2025年8月12日</h3>
+                        <p class="text-gray-600 mt-1">早上跑步30分钟，晚上做了健康的蔬菜沙拉。</p>
+                    </div>
+                    
+                    <div class="border-l-4 border-life pl-3 py-1">
+                        <h3 class="font-semibold text-gray-800">2025年8月10日</h3>
+                        <p class="text-gray-600 mt-1">和朋友去看了新上映的电影，非常精彩。</p>
+                    </div>
+                    
+                    <div class="border-l-4 border-life pl-3 py-1">
+                        <h3 class="font-semibold text-gray-800">2025年8月9日</h3>
+                        <p class="text-gray-600 mt-1">在家做了大扫除，整理了书籍和杂物。</p>
+                    </div>
+                    
+                    <!-- 在这里添加新的生活记录 -->
+                    <!-- 
+                    <div class="border-l-4 border-life pl-3 py-1">
+                        <h3 class="font-semibold text-gray-800">日期</h3>
+                        <p class="text-gray-600 mt-1">生活内容...</p>
+                    </div>
+                    -->
+                </div>
+            </section>
         </div>
     </main>
 
-    <!-- 底部信息 -->
-    <footer class="bg-white border-t border-gray-200 py-4">
-        <div class="container mx-auto px-4 text-center text-gray-500 text-sm">
-            <p>数据存储在本地，确保您的隐私安全</p>
+    <!-- 页脚 -->
+    <footer class="bg-white mt-10 py-6 shadow-inner">
+        <div class="container mx-auto px-4 text-center text-gray-600">
+            <p>最后更新: 2025年8月12日</p>
+            <p class="mt-2">记录美好生活，见证成长历程</p>
         </div>
     </footer>
 
-    <!-- 新建/编辑记录模态框 -->
-    <div id="entryModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-auto">
-            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
-                <h2 id="modalTitle" class="text-xl font-bold">新建记录</h2>
-                <button id="closeModal" class="p-2 hover:bg-gray-100 rounded-full transition-custom">
-                    <i class="fa fa-times text-gray-500"></i>
-                </button>
-            </div>
-            
-            <form id="entryForm" class="p-4 space-y-4">
-                <input type="hidden" id="entryId">
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="entryCategory" class="block text-sm font-medium text-gray-700 mb-1">类别</label>
-                        <select id="entryCategory" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50" required>
-                            <option value="study">学习</option>
-                            <option value="work">工作</option>
-                            <option value="life">生活</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label for="entryType" class="block text-sm font-medium text-gray-700 mb-1">类型</label>
-                        <select id="entryType" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50" required>
-                            <option value="journal">日记</option>
-                            <option value="plan">计划</option>
-                            <option value="summary">总结</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div>
-                    <label for="entryTitle" class="block text-sm font-medium text-gray-700 mb-1">标题</label>
-                    <input type="text" id="entryTitle" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="输入标题..." required>
-                </div>
-                
-                <div>
-                    <label for="entryContent" class="block text-sm font-medium text-gray-700 mb-1">内容</label>
-                    <textarea id="entryContent" rows="8" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="输入内容..." required></textarea>
-                </div>
-                
-                <div class="flex justify-end gap-3 pt-2">
-                    <button type="button" id="cancelEntry" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-custom">取消</button>
-                    <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom">保存</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <script>
-        // 数据管理
-        const DataManager = {
-            entries: [],
-            
-            init() {
-                this.loadEntries();
-                
-                // ==================================================
-                // 【在此处添加你的静态内容】
-                // 以下是示例内容，你可以根据需要修改或添加更多记录
-                // 注意：如果本地存储已有数据，这些预设内容不会显示
-                // 如需强制显示预设内容，可先清除浏览器本地存储
-                // ==================================================
-                if (this.entries.length === 0) {
-                    this.entries = [
-                        // 示例1：学习类日记
-                        {
-                            id: "1",
-                            createdAt: "2025-08-10T15:30:00",
-                            updatedAt: "2025-08-10T15:30:00",
-                            category: "study",  // 类别：学习
-                            type: "journal",    // 类型：日记
-                            title: "学习油猴脚本",
-                            content: "今天学习了油猴脚本的使用，很多网站VIP视频可以免费看了，又省下一笔钱；CSDN,知乎等网站也可以不登录无广告了，新技术get！"
-                        },
-                        // 示例2：工作类计划
-                        {
-                            id: "2",
-                            createdAt: "2025-08-10T09:15:00",
-                            updatedAt: "2025-08-10T09:15:00",
-                            category: "work",   // 类别：工作
-                            type: "plan",       // 类型：计划
-                            title: "今日工作安排",
-                            content: "把简历弄好，弄成pdf的，然后多多发等面试"
-                        },
-                        // 示例3：生活类总结
-                        {
-                            id: "3",
-                            createdAt: "2025-08-09T21:45:00",
-                            updatedAt: "2025-08-09T21:45:00",
-                            category: "life",   // 类别：生活
-                            type: "summary",    // 类型：总结
-                            title: "周末生活总结",
-                            content: "学做菜，把衣服洗好了"
-                        }
-                        // 在这里继续添加更多记录...
-                        // ,{
-                        //     id: "4",
-                        //     createdAt: "2025-08-08T...",
-                        //     updatedAt: "2025-08-08T...",
-                        //     category: "...",
-                        //     type: "...",
-                        //     title: "...",
-                        //     content: "..."
-                        // }
-                    ];
-                    this.saveEntries(); // 保存到本地存储
-                }
-            },
-            
-            loadEntries() {
-                const saved = localStorage.getItem('journalEntries');
-                this.entries = saved ? JSON.parse(saved) : [];
-                return this.entries;
-            },
-            
-            saveEntries() {
-                localStorage.setItem('journalEntries', JSON.stringify(this.entries));
-            },
-            
-            addEntry(entry) {
-                const newEntry = {
-                    id: Date.now().toString(),
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString(),
-                    ...entry
-                };
-                this.entries.unshift(newEntry); // 添加到开头
-                this.saveEntries();
-                return newEntry;
-            },
-            
-            updateEntry(id, updatedData) {
-                const index = this.entries.findIndex(entry => entry.id === id);
-                if (index !== -1) {
-                    this.entries[index] = {
-                        ...this.entries[index],
-                        ...updatedData,
-                        updatedAt: new Date().toISOString()
-                    };
-                    this.saveEntries();
-                    return this.entries[index];
-                }
-                return null;
-            },
-            
-            deleteEntry(id) {
-                const initialLength = this.entries.length;
-                this.entries = this.entries.filter(entry => entry.id !== id);
-                if (this.entries.length !== initialLength) {
-                    this.saveEntries();
-                    return true;
-                }
-                return false;
-            },
-            
-            exportEntries() {
-                const dataStr = JSON.stringify(this.entries, null, 2);
-                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-                
-                const exportFileDefaultName = `journal-export-${new Date().toISOString().slice(0,10)}.json`;
-                
-                const linkElement = document.createElement('a');
-                linkElement.setAttribute('href', dataUri);
-                linkElement.setAttribute('download', exportFileDefaultName);
-                linkElement.click();
+        // 简单的JavaScript功能：添加当前日期到页脚
+        document.addEventListener('DOMContentLoaded', function() {
+            const footerDate = document.querySelector('footer p:first-child');
+            if (footerDate) {
+                const now = new Date();
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                footerDate.textContent = `最后更新: ${now.toLocaleDateString('zh-CN', options)}`;
             }
-        };
-
-        // UI 控制器
-        const UIController = {
-            entriesContainer: document.getElementById('entriesContainer'),
-            entryModal: document.getElementById('entryModal'),
-            entryForm: document.getElementById('entryForm'),
-            entryId: document.getElementById('entryId'),
-            entryTitle: document.getElementById('entryTitle'),
-            entryContent: document.getElementById('entryContent'),
-            entryCategory: document.getElementById('entryCategory'),
-            entryType: document.getElementById('entryType'),
-            modalTitle: document.getElementById('modalTitle'),
-            categoryFilter: document.getElementById('categoryFilter'),
-            typeFilter: document.getElementById('typeFilter'),
-            searchInput: document.getElementById('searchInput'),
-            
-            init() {
-                this.setupEventListeners();
-                this.renderEntries();
-            },
-            
-            setupEventListeners() {
-                // 新建记录按钮
-                document.getElementById('newEntryBtn').addEventListener('click', () => this.openModal());
-                
-                // 关闭模态框
-                document.getElementById('closeModal').addEventListener('click', () => this.closeModal());
-                document.getElementById('cancelEntry').addEventListener('click', () => this.closeModal());
-                
-                // 提交表单
-                this.entryForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.saveEntry();
-                });
-                
-                // 筛选器变化
-                this.categoryFilter.addEventListener('change', () => this.renderEntries());
-                this.typeFilter.addEventListener('change', () => this.renderEntries());
-                this.searchInput.addEventListener('input', () => this.renderEntries());
-                
-                // 导出数据
-                document.getElementById('exportData').addEventListener('click', () => DataManager.exportEntries());
-                
-                // 主题切换
-                document.getElementById('themeToggle').addEventListener('click', () => this.toggleTheme());
-            },
-            
-            renderEntries() {
-                const entries = this.getFilteredEntries();
-                this.entriesContainer.innerHTML = '';
-                
-                if (entries.length === 0) {
-                    this.entriesContainer.innerHTML = `
-                        <div class="col-span-full text-center py-12 text-gray-500">
-                            <i class="fa fa-file-text-o text-5xl mb-4 opacity-30"></i>
-                            <p>没有找到匹配的记录</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                entries.forEach(entry => {
-                    const entryElement = this.createEntryElement(entry);
-                    this.entriesContainer.appendChild(entryElement);
-                });
-            },
-            
-            getFilteredEntries() {
-                const category = this.categoryFilter.value;
-                const type = this.typeFilter.value;
-                const search = this.searchInput.value.toLowerCase();
-                
-                return DataManager.entries.filter(entry => {
-                    const matchesCategory = category === 'all' || entry.category === category;
-                    const matchesType = type === 'all' || entry.type === type;
-                    const matchesSearch = search === '' || 
-                                         entry.title.toLowerCase().includes(search) || 
-                                         entry.content.toLowerCase().includes(search);
-                    
-                    return matchesCategory && matchesType && matchesSearch;
-                });
-            },
-            
-            createEntryElement(entry) {
-                const categoryClass = {
-                    study: 'bg-blue-50 border-blue-200',
-                    work: 'bg-green-50 border-green-200',
-                    life: 'bg-amber-50 border-amber-200'
-                }[entry.category];
-                
-                const typeIcon = {
-                    journal: '<i class="fa fa-book text-blue-500"></i> 日记',
-                    plan: '<i class="fa fa-list-alt text-green-500"></i> 计划',
-                    summary: '<i class="fa fa-bar-chart text-amber-500"></i> 总结'
-                }[entry.type];
-                
-                const categoryText = {
-                    study: '学习',
-                    work: '工作',
-                    life: '生活'
-                }[entry.category];
-                
-                const formattedDate = new Date(entry.createdAt).toLocaleString();
-                
-                const div = document.createElement('div');
-                div.className = `bg-white rounded-lg shadow-sm border ${categoryClass} overflow-hidden transition-custom hover:shadow-md`;
-                div.innerHTML = `
-                    <div class="p-4">
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="text-xs font-medium px-2 py-1 rounded-full ${
-                                entry.category === 'study' ? 'bg-blue-100 text-blue-800' :
-                                entry.category === 'work' ? 'bg-green-100 text-green-800' :
-                                'bg-amber-100 text-amber-800'
-                            }">${categoryText}</span>
-                            <span class="text-xs text-gray-500">${formattedDate}</span>
-                        </div>
-                        
-                        <h3 class="text-lg font-semibold mb-2 line-clamp-1">${entry.title}</h3>
-                        
-                        <div class="text-sm text-gray-600 mb-3 line-clamp-3">${this.formatContentPreview(entry.content)}</div>
-                        
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs flex items-center text-gray-500">${typeIcon}</span>
-                            <div class="flex space-x-1">
-                                <button class="edit-btn p-1.5 rounded hover:bg-gray-100 text-gray-600" data-id="${entry.id}">
-                                    <i class="fa fa-pencil"></i>
-                                </button>
-                                <button class="delete-btn p-1.5 rounded hover:bg-gray-100 text-gray-600" data-id="${entry.id}">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                // 添加编辑和删除事件
-                div.querySelector('.edit-btn').addEventListener('click', () => this.editEntry(entry.id));
-                div.querySelector('.delete-btn').addEventListener('click', () => this.deleteEntry(entry.id));
-                
-                return div;
-            },
-            
-            formatContentPreview(content) {
-                // 简单格式化内容预览，移除换行并限制长度
-                return content.replace(/\n/g, ' ').substring(0, 100) + (content.length > 100 ? '...' : '');
-            },
-            
-            openModal(isEdit = false, entry = null) {
-                this.entryForm.reset();
-                this.entryId.value = '';
-                this.modalTitle.textContent = isEdit ? '编辑记录' : '新建记录';
-                this.entryModal.classList.remove('hidden');
-                this.entryModal.classList.add('flex');
-                
-                if (isEdit && entry) {
-                    this.entryId.value = entry.id;
-                    this.entryTitle.value = entry.title;
-                    this.entryContent.value = entry.content;
-                    this.entryCategory.value = entry.category;
-                    this.entryType.value = entry.type;
-                }
-                
-                // 聚焦到标题输入框
-                setTimeout(() => this.entryTitle.focus(), 300);
-            },
-            
-            closeModal() {
-                this.entryModal.classList.remove('flex');
-                this.entryModal.classList.add('hidden');
-            },
-            
-            saveEntry() {
-                const id = this.entryId.value;
-                const entryData = {
-                    title: this.entryTitle.value,
-                    content: this.entryContent.value,
-                    category: this.entryCategory.value,
-                    type: this.entryType.value
-                };
-                
-                if (id) {
-                    DataManager.updateEntry(id, entryData);
-                } else {
-                    DataManager.addEntry(entryData);
-                }
-                
-                this.closeModal();
-                this.renderEntries();
-            },
-            
-            editEntry(id) {
-                const entry = DataManager.entries.find(e => e.id === id);
-                if (entry) {
-                    this.openModal(true, entry);
-                }
-            },
-            
-            deleteEntry(id) {
-                if (confirm('确定要删除这条记录吗？')) {
-                    if (DataManager.deleteEntry(id)) {
-                        this.renderEntries();
-                    }
-                }
-            },
-            
-            toggleTheme() {
-                document.body.classList.toggle('dark-mode');
-                const icon = document.querySelector('#themeToggle i');
-                if (document.body.classList.contains('dark-mode')) {
-                    icon.classList.remove('fa-moon-o');
-                    icon.classList.add('fa-sun-o');
-                    document.body.classList.add('bg-gray-900', 'text-gray-100');
-                    document.body.classList.remove('bg-gray-50', 'text-gray-800');
-                } else {
-                    icon.classList.remove('fa-sun-o');
-                    icon.classList.add('fa-moon-o');
-                    document.body.classList.remove('bg-gray-900', 'text-gray-100');
-                    document.body.classList.add('bg-gray-50', 'text-gray-800');
-                }
-            }
-        };
-
-        // 初始化应用
-        document.addEventListener('DOMContentLoaded', () => {
-            DataManager.init();
-            UIController.init();
         });
     </script>
 </body>
