@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的读书笔记</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5', // 主色调：靛蓝色，代表知识和智慧
+                        secondary: '#EC4899', // 辅助色：粉色，用于强调
+                        neutral: {
+                            100: '#F3F4F6',
+                            200: '#E5E7EB',
+                            800: '#1F2937',
+                            900: '#111827'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .note-card {
+                @apply bg-white rounded-xl shadow-md p-5 transition-all duration-300 hover:shadow-lg border border-neutral-200;
+            }
+            .btn-primary {
+                @apply bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300;
+            }
+            .input-field {
+                @apply w-full p-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all;
+            }
+        }
+    </style>
+</head>
+<body class="bg-neutral-100 min-h-screen font-sans text-neutral-800">
+    <!-- 页面头部 -->
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="container mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center mb-4 md:mb-0">
+                <i class="fa fa-book text-primary text-3xl mr-3"></i>
+                <h1 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neutral-900">我的读书笔记</h1>
+            </div>
+            <button id="addNoteBtn" class="btn-primary flex items-center">
+                <i class="fa fa-plus mr-2"></i> 添加笔记
+            </button>
+        </div>
+    </header>
+
+    <!-- 主要内容区 -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- 笔记统计信息 -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+            <div class="flex flex-wrap gap-6">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mr-4">
+                        <i class="fa fa-sticky-note text-primary text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-neutral-600 text-sm">总笔记数</p>
+                        <p id="totalNotes" class="text-2xl font-bold">0</p>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center mr-4">
+                        <i class="fa fa-book text-secondary text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-neutral-600 text-sm">已读书籍</p>
+                        <p id="totalBooks" class="text-2xl font-bold">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 笔记列表 -->
+        <h2 class="text-2xl font-bold mb-6">我的笔记</h2>
+        <div id="notesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- 笔记卡片将通过JavaScript动态添加 -->
+            <div class="col-span-full text-center py-12 text-neutral-500">
+                <i class="fa fa-book-open text-5xl mb-4 opacity-30"></i>
+                <p>还没有添加笔记，点击"添加笔记"开始记录吧</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- 添加/编辑笔记的模态框 -->
+    <div id="noteModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-neutral-200">
+                <h3 id="modalTitle" class="text-xl font-bold">添加读书笔记</h3>
+            </div>
+            <form id="noteForm" class="p-6 space-y-5">
+                <input type="hidden" id="noteId">
+                
+                <div>
+                    <label for="bookTitle" class="block text-sm font-medium text-neutral-700 mb-1">书籍名称 *</label>
+                    <input type="text" id="bookTitle" class="input-field" placeholder="例如：《小王子》" required>
+                </div>
+                
+                <div>
+                    <label for="author" class="block text-sm font-medium text-neutral-700 mb-1">作者</label>
+                    <input type="text" id="author" class="input-field" placeholder="例如：安托万·德·圣-埃克苏佩里">
+                </div>
+                
+                <div>
+                    <label for="coverUrl" class="block text-sm font-medium text-neutral-700 mb-1">书籍封面URL</label>
+                    <input type="url" id="coverUrl" class="input-field" placeholder="可选，输入图片链接">
+                    <p class="text-xs text-neutral-500 mt-1">可以从豆瓣读书等网站获取书籍封面图片地址</p>
+                </div>
+                
+                <div>
+                    <label for="readingDate" class="block text-sm font-medium text-neutral-700 mb-1">阅读日期</label>
+                    <input type="date" id="readingDate" class="input-field">
+                </div>
+                
+                <div>
+                    <label for="notes" class="block text-sm font-medium text-neutral-700 mb-1">笔记内容 *</label>
+                    <textarea id="notes" rows="6" class="input-field" placeholder="记录你的想法、感悟或摘抄..." required></textarea>
+                </div>
+                
+                <div class="flex justify-end gap-3 pt-4 border-t border-neutral-200">
+                    <button type="button" id="cancelBtn" class="px-4 py-2 border border-neutral-200 rounded-lg hover:bg-neutral-100 transition-colors">
+                        取消
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fa fa-save mr-2"></i> 保存笔记
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-white mt-12 py-6 border-t border-neutral-200">
+        <div class="container mx-auto px-4 text-center text-neutral-500 text-sm">
+            <p>© 2023 我的读书笔记 | 用文字记录思想的足迹</p>
+        </div>
+    </footer>
+
+    <script>
+        // 全局变量
+        let notes = JSON.parse(localStorage.getItem('bookNotes')) || [];
+        let currentNoteId = null;
+        
+        // DOM元素
+        const notesContainer = document.getElementById('notesContainer');
+        const noteModal = document.getElementById('noteModal');
+        const addNoteBtn = document.getElementById('addNoteBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const noteForm = document.getElementById('noteForm');
+        const modalTitle = document.getElementById('modalTitle');
+        const totalNotesEl = document.getElementById('totalNotes');
+        const totalBooksEl = document.getElementById('totalBooks');
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', () => {
+            renderNotes();
+            updateStats();
+            
+            // 事件监听
+            addNoteBtn.addEventListener('click', openAddModal);
+            cancelBtn.addEventListener('click', closeModal);
+            noteForm.addEventListener('submit', handleFormSubmit);
+        });
+        
+        // 渲染笔记列表
+        function renderNotes() {
+            if (notes.length === 0) {
+                notesContainer.innerHTML = `
+                    <div class="col-span-full text-center py-12 text-neutral-500">
+                        <i class="fa fa-book-open text-5xl mb-4 opacity-30"></i>
+                        <p>还没有添加笔记，点击"添加笔记"开始记录吧</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 按日期排序，最新的在前
+            const sortedNotes = [...notes].sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
+            
+            notesContainer.innerHTML = '';
+            sortedNotes.forEach(note => {
+                const noteCard = document.createElement('div');
+                noteCard.className = 'note-card';
+                noteCard.innerHTML = `
+                    <div class="flex gap-4 mb-4">
+                        <div class="w-20 h-28 flex-shrink-0">
+                            <img src="${note.coverUrl || 'https://picsum.photos/seed/book/120/180'}" 
+                                 alt="${note.bookTitle}封面" 
+                                 class="w-full h-full object-cover rounded-lg">
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-1 line-clamp-1">${note.bookTitle}</h3>
+                            <p class="text-neutral-600 text-sm mb-1">${note.author || '未知作者'}</p>
+                            <p class="text-neutral-500 text-xs">${formatDate(note.readingDate || note.dateCreated)}</p>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <p class="text-neutral-700 text-sm line-clamp-3">${note.notes}</p>
+                    </div>
+                    <div class="flex justify-end gap-2">
+                        <button class="text-neutral-500 hover:text-primary p-1" onclick="editNote('${note.id}')">
+                            <i class="fa fa-pencil"></i>
+                        </button>
+                        <button class="text-neutral-500 hover:text-red-500 p-1" onclick="deleteNote('${note.id}')">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                notesContainer.appendChild(noteCard);
+            });
+        }
+        
+        // 更新统计信息
+        function updateStats() {
+            totalNotesEl.textContent = notes.length;
+            
+            // 计算独特书籍数量
+            const uniqueBooks = new Set(notes.map(note => note.bookTitle.toLowerCase()));
+            totalBooksEl.textContent = uniqueBooks.size;
+        }
+        
+        // 打开添加笔记模态框
+        function openAddModal() {
+            currentNoteId = null;
+            modalTitle.textContent = '添加读书笔记';
+            noteForm.reset();
+            openModal();
+        }
+        
+        // 打开编辑笔记模态框
+        function editNote(id) {
+            const note = notes.find(n => n.id === id);
+            if (!note) return;
+            
+            currentNoteId = id;
+            modalTitle.textContent = '编辑读书笔记';
+            
+            // 填充表单
+            document.getElementById('bookTitle').value = note.bookTitle;
+            document.getElementById('author').value = note.author || '';
+            document.getElementById('coverUrl').value = note.coverUrl || '';
+            document.getElementById('readingDate').value = note.readingDate || '';
+            document.getElementById('notes').value = note.notes;
+            
+            openModal();
+        }
+        
+        // 删除笔记
+        function deleteNote(id) {
+            if (confirm('确定要删除这条笔记吗？')) {
+                notes = notes.filter(note => note.id !== id);
+                saveNotes();
+                renderNotes();
+                updateStats();
+            }
+        }
+        
+        // 处理表单提交
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const noteData = {
+                bookTitle: document.getElementById('bookTitle').value,
+                author: document.getElementById('author').value,
+                coverUrl: document.getElementById('coverUrl').value,
+                readingDate: document.getElementById('readingDate').value,
+                notes: document.getElementById('notes').value
+            };
+            
+            if (currentNoteId) {
+                // 更新现有笔记
+                const index = notes.findIndex(note => note.id === currentNoteId);
+                if (index !== -1) {
+                    notes[index] = { ...notes[index], ...noteData };
+                }
+            } else {
+                // 添加新笔记
+                notes.push({
+                    id: Date.now().toString(),
+                    dateCreated: new Date().toISOString().split('T')[0],
+                    ...noteData
+                });
+            }
+            
+            saveNotes();
+            closeModal();
+            renderNotes();
+            updateStats();
+        }
+        
+        // 保存笔记到本地存储
+        function saveNotes() {
+            localStorage.setItem('bookNotes', JSON.stringify(notes));
+        }
+        
+        // 打开模态框
+        function openModal() {
+            noteModal.style.display = 'flex';
+            // 添加动画效果
+            setTimeout(() => {
+                noteModal.querySelector('div').classList.add('scale-100');
+                noteModal.querySelector('div').classList.remove('scale-95');
+            }, 10);
+        }
+        
+        // 关闭模态框
+        function closeModal() {
+            noteModal.style.display = 'none';
+        }
+        
+        // 格式化日期显示
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('zh-CN', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+        
+        // 暴露函数到全局，以便在HTML中使用
+        window.editNote = editNote;
+        window.deleteNote = deleteNote;
+    </script>
+</body>
+</html>
